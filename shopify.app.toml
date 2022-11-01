@@ -1,0 +1,4 @@
+# This file stores configurations for your Shopify app.
+
+name = "Rye"
+scopes = "unauthenticated_read_checkouts,unauthenticated_write_checkouts,unauthenticated_read_product_listings"
