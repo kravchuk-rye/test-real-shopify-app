@@ -1,10 +1,8 @@
-import { Shopify } from "@shopify/shopify-api";
-import ensureBilling, {
-  ShopifyBillingError,
-} from "../helpers/ensure-billing.js";
-import redirectToAuth from "../helpers/redirect-to-auth.js";
+import { Shopify } from '@shopify/shopify-api';
+import ensureBilling, { ShopifyBillingError } from '../helpers/ensure-billing.js';
+import redirectToAuth from '../helpers/redirect-to-auth.js';
 
-import returnTopLevelRedirection from "../helpers/return-top-level-redirection.js";
+import returnTopLevelRedirection from '../helpers/return-top-level-redirection.js';
 
 const TEST_GRAPHQL_QUERY = `
 {
@@ -18,11 +16,7 @@ export default function verifyRequest(
   { billing = { required: false } } = { billing: { required: false } }
 ) {
   return async (req, res, next) => {
-    const session = await Shopify.Utils.loadCurrentSession(
-      req,
-      res,
-      app.get("use-online-tokens")
-    );
+    const session = await Shopify.Utils.loadCurrentSession(req, res, app.get('use-online-tokens'));
 
     let shop = Shopify.Utils.sanitizeShop(req.query.shop);
     if (session && shop && session.shop !== shop) {
@@ -34,10 +28,7 @@ export default function verifyRequest(
       try {
         if (billing.required) {
           // The request to check billing status serves to validate that the access token is still valid.
-          const [hasPayment, confirmationUrl] = await ensureBilling(
-            session,
-            billing
-          );
+          const [hasPayment, confirmationUrl] = await ensureBilling(session, billing);
 
           if (!hasPayment) {
             returnTopLevelRedirection(req, res, confirmationUrl);
@@ -45,18 +36,12 @@ export default function verifyRequest(
           }
         } else {
           // Make a request to ensure the access token is still valid. Otherwise, re-authenticate the user.
-          const client = new Shopify.Clients.Graphql(
-            session.shop,
-            session.accessToken
-          );
+          const client = new Shopify.Clients.Graphql(session.shop, session.accessToken);
           await client.query({ data: TEST_GRAPHQL_QUERY });
         }
         return next();
       } catch (e) {
-        if (
-          e instanceof Shopify.Errors.HttpResponseError &&
-          e.response.code === 401
-        ) {
+        if (e instanceof Shopify.Errors.HttpResponseError && e.response.code === 401) {
           // Re-authenticate if we get a 401 response
         } else if (e instanceof ShopifyBillingError) {
           console.error(e.message, e.errorData[0]);
@@ -76,16 +61,12 @@ export default function verifyRequest(
         } else if (Shopify.Context.IS_EMBEDDED_APP) {
           if (bearerPresent) {
             const payload = Shopify.Utils.decodeSessionToken(bearerPresent[1]);
-            shop = payload.dest.replace("https://", "");
+            shop = payload.dest.replace('https://', '');
           }
         }
       }
     }
 
-    returnTopLevelRedirection(
-      req,
-      res,
-      `/api/auth?shop=${encodeURIComponent(shop)}`
-    );
+    returnTopLevelRedirection(req, res, `/api/auth?shop=${encodeURIComponent(shop)}`);
   };
 }

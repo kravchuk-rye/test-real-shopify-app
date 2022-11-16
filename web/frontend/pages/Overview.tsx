@@ -1,5 +1,5 @@
-import React from "react";
-import { OverviewPage, FeatureListCard } from "@shopify/channels-ui";
+import React from 'react';
+import { OverviewPage, FeatureListCard } from '@shopify/channels-ui';
 
 export default function MyOverviewPage() {
   // the number of products publication to your app's
@@ -9,7 +9,7 @@ export default function MyOverviewPage() {
   const publicationId = 72112898104;
 
   // current shop domain
-  const shopOrigin = "test.myshopify.com";
+  const shopOrigin = 'test.myshopify.com';
 
   return (
     <OverviewPage title="Mockingbird channel overview">
@@ -17,15 +17,15 @@ export default function MyOverviewPage() {
         <FeatureListCard
           features={[
             {
-              title: "Mockingbird Shopping",
+              title: 'Mockingbird Shopping',
               description:
-                "Let customers discover and purchase your products directly on Mockingbird.",
+                'Let customers discover and purchase your products directly on Mockingbird.',
               badge: {
-                status: "success",
-                children: "Active",
+                status: 'success',
+                children: 'Active',
               },
               action: {
-                content: "View shop",
+                content: 'View shop',
               },
             },
           ]}

@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   OnboardingPage,
   OnboardingCard,
   AccountConnection,
   OnboardingCardState,
-} from "@shopify/channels-ui";
-import { Stack, Button, Link } from "@shopify/polaris";
+} from '@shopify/channels-ui';
+import { Stack, Button, Link } from '@shopify/polaris';
 
 export default function MyOnboardingPage() {
   // setup states to track user completion for this example
@@ -39,30 +39,29 @@ export default function MyOnboardingPage() {
   };
 
   // setup state of the onboarding steps
-  const accountState = accountConnected ? "completed" : "active";
-  let termsState: OnboardingCardState = "disabled";
+  const accountState = accountConnected ? 'completed' : 'active';
+  let termsState: OnboardingCardState = 'disabled';
   if (accountConnected && !termsAccepted) {
-    termsState = "active";
+    termsState = 'active';
   } else if (termsAccepted) {
-    termsState = "completed";
+    termsState = 'completed';
   }
 
   // set AccountConnection props based on whether an account has been connected
   const accountConnectionProps = accountConnected
     ? {
-        content: "example@mockingbird.com", // an identifier for the account on your platform
-        avatar:
-          "https://burst.shopifycdn.com/photos/fashion-model-in-fur.jpg?width=373", // thumbnail representation of the account on your platform (optional)
+        content: 'example@mockingbird.com', // an identifier for the account on your platform
+        avatar: 'https://burst.shopifycdn.com/photos/fashion-model-in-fur.jpg?width=373', // thumbnail representation of the account on your platform (optional)
         action: {
-          content: "Disconnect",
+          content: 'Disconnect',
           onAction: handleAccountDisconnect,
         },
         connected: true,
       }
     : {
-        content: "No account connected",
+        content: 'No account connected',
         action: {
-          content: "Connect account",
+          content: 'Connect account',
           onAction: handleAccountConnect,
         },
         connected: false,
@@ -75,7 +74,7 @@ export default function MyOnboardingPage() {
         onAction: handleBreadcrumbAction,
       }}
       action={{
-        content: "Finish setup",
+        content: 'Finish setup',
         disabled: !termsAccepted,
         onAction: handleFinishSetup,
       }}
@@ -88,16 +87,11 @@ export default function MyOnboardingPage() {
       >
         <AccountConnection {...accountConnectionProps} />
       </OnboardingCard>
-      <OnboardingCard
-        id="terms"
-        title="Accept the terms of service"
-        state={termsState}
-        sectioned
-      >
+      <OnboardingCard id="terms" title="Accept the terms of service" state={termsState} sectioned>
         <Stack vertical>
           <p>
-            In order to complete set up, you need to read and agree to{" "}
-            <Link>Mockingbird Merchant Terms of Service</Link> and{" "}
+            In order to complete set up, you need to read and agree to{' '}
+            <Link>Mockingbird Merchant Terms of Service</Link> and{' '}
             <Link>Mockingbird Shopping Terms of Service</Link>
           </p>
           <Stack distribution="trailing">

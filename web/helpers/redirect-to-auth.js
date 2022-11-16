@@ -1,12 +1,12 @@
-import { Shopify } from "@shopify/shopify-api";
+import { Shopify } from '@shopify/shopify-api';
 
 export default async function redirectToAuth(req, res, app) {
   if (!req.query.shop) {
     res.status(500);
-    return res.send("No shop provided");
+    return res.send('No shop provided');
   }
 
-  if (req.query.embedded === "1") {
+  if (req.query.embedded === '1') {
     return clientSideRedirect(req, res);
   }
 
@@ -33,8 +33,8 @@ async function serverSideRedirect(req, res, app) {
     req,
     res,
     req.query.shop,
-    "/api/auth/callback",
-    app.get("use-online-tokens")
+    '/api/auth/callback',
+    app.get('use-online-tokens')
   );
 
   return res.redirect(redirectUrl);

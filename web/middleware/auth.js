@@ -1,24 +1,20 @@
-import { Shopify } from "@shopify/shopify-api";
-import { gdprTopics } from "@shopify/shopify-api/dist/webhooks/registry.js";
+import { Shopify } from '@shopify/shopify-api';
+import { gdprTopics } from '@shopify/shopify-api/dist/webhooks/registry.js';
 
-import ensureBilling from "../helpers/ensure-billing.js";
-import redirectToAuth from "../helpers/redirect-to-auth.js";
+import ensureBilling from '../helpers/ensure-billing.js';
+import redirectToAuth from '../helpers/redirect-to-auth.js';
 
 export default function applyAuthMiddleware(
   app,
   { billing = { required: false } } = { billing: { required: false } }
 ) {
-  app.get("/api/auth", async (req, res) => {
-    return redirectToAuth(req, res, app)
+  app.get('/api/auth', async (req, res) => {
+    return redirectToAuth(req, res, app);
   });
 
-  app.get("/api/auth/callback", async (req, res) => {
+  app.get('/api/auth/callback', async (req, res) => {
     try {
-      const session = await Shopify.Auth.validateAuthCallback(
-        req,
-        res,
-        req.query
-      );
+      const session = await Shopify.Auth.validateAuthCallback(req, res, req.query);
 
       const responses = await Shopify.Webhooks.Registry.registerAll({
         shop: session.shop,
@@ -36,9 +32,11 @@ export default function applyAuthMiddleware(
             );
           } else {
             console.log(
-              `Failed to register ${topic} webhook: ${
-                JSON.stringify(response.result.data, undefined, 2)
-              }`
+              `Failed to register ${topic} webhook: ${JSON.stringify(
+                response.result.data,
+                undefined,
+                2
+              )}`
             );
           }
         }
@@ -46,10 +44,7 @@ export default function applyAuthMiddleware(
 
       // If billing is required, check if the store needs to be charged right away to minimize the number of redirects.
       if (billing.required) {
-        const [hasPayment, confirmationUrl] = await ensureBilling(
-          session,
-          billing
-        );
+        const [hasPayment, confirmationUrl] = await ensureBilling(session, billing);
 
         if (!hasPayment) {
           return res.redirect(confirmationUrl);
