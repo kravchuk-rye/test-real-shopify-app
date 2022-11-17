@@ -1,8 +1,8 @@
 import { Shopify } from '@shopify/shopify-api';
-import ensureBilling, { ShopifyBillingError } from '../helpers/ensure-billing.js';
-import redirectToAuth from '../helpers/redirect-to-auth.js';
+import ensureBilling, { ShopifyBillingError } from '../helpers/ensure-billing';
+import redirectToAuth from '../helpers/redirect-to-auth';
 
-import returnTopLevelRedirection from '../helpers/return-top-level-redirection.js';
+import returnTopLevelRedirection from '../helpers/return-top-level-redirection';
 
 const TEST_GRAPHQL_QUERY = `
 {
@@ -28,6 +28,7 @@ export default function verifyRequest(
       try {
         if (billing.required) {
           // The request to check billing status serves to validate that the access token is still valid.
+          // @ts-expect-error poor shopify typings
           const [hasPayment, confirmationUrl] = await ensureBilling(session, billing);
 
           if (!hasPayment) {
@@ -44,6 +45,7 @@ export default function verifyRequest(
         if (e instanceof Shopify.Errors.HttpResponseError && e.response.code === 401) {
           // Re-authenticate if we get a 401 response
         } else if (e instanceof ShopifyBillingError) {
+          // @ts-expect-error poor shopify typings
           console.error(e.message, e.errorData[0]);
           res.status(500).end();
           return;
@@ -67,6 +69,7 @@ export default function verifyRequest(
       }
     }
 
+    // @ts-expect-error poor shopify typings
     returnTopLevelRedirection(req, res, `/api/auth?shop=${encodeURIComponent(shop)}`);
   };
 }

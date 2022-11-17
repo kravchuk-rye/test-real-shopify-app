@@ -53,6 +53,7 @@ async function hasActivePayment(session, { chargeName, interval }) {
     const currentInstallations = await client.query({
       data: RECURRING_PURCHASES_QUERY,
     });
+    // @ts-expect-error wrong shopify typings
     const subscriptions = currentInstallations.body.data.currentAppInstallation.activeSubscriptions;
 
     for (let i = 0, len = subscriptions.length; i < len; i++) {
@@ -70,6 +71,7 @@ async function hasActivePayment(session, { chargeName, interval }) {
           variables: { endCursor },
         },
       });
+      // @ts-expect-error wrong shopify typings
       purchases = currentInstallations.body.data.currentAppInstallation.oneTimePurchases;
 
       for (let i = 0, len = purchases.edges.length; i < len; i++) {

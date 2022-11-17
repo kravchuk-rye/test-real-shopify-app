@@ -15,6 +15,7 @@ export default async function redirectToAuth(req, res, app) {
 
 function clientSideRedirect(req, res) {
   const shop = Shopify.Utils.sanitizeShop(req.query.shop);
+  // @ts-expect-error wrong shopify typings
   const redirectUriParams = new URLSearchParams({
     shop,
     host: req.query.host,
