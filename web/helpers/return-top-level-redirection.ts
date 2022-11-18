@@ -5,8 +5,8 @@ export default function returnTopLevelRedirection(req, res, redirectUrl) {
   // re-authenticate
   if (bearerPresent) {
     res.status(403);
-    res.header("X-Shopify-API-Request-Failure-Reauthorize", "1");
-    res.header("X-Shopify-API-Request-Failure-Reauthorize-Url", redirectUrl);
+    res.header('X-Shopify-API-Request-Failure-Reauthorize', '1');
+    res.header('X-Shopify-API-Request-Failure-Reauthorize-Url', redirectUrl);
     res.end();
   } else {
     res.redirect(redirectUrl);

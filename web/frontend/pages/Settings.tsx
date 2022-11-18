@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { SettingsPage, AccountConnection } from "@shopify/channels-ui";
-import { Card } from "@shopify/polaris";
+import React, { useState } from 'react';
+import { SettingsPage, AccountConnection } from '@shopify/channels-ui';
+import { Card } from '@shopify/polaris';
 
 export default function MySettingsPage() {
   // setup states to track account connection for this example
@@ -20,19 +20,18 @@ export default function MySettingsPage() {
   // set AccountConnection props based on whether an account is connected
   const accountConnectionProps = accountConnected
     ? {
-        content: "example@mockingbird.com",
-        avatarUrl:
-          "https://burst.shopifycdn.com/photos/fashion-model-in-fur.jpg?width=373",
+        content: 'example@mockingbird.com',
+        avatarUrl: 'https://burst.shopifycdn.com/photos/fashion-model-in-fur.jpg?width=373',
         action: {
-          content: "Disconnect",
+          content: 'Disconnect',
           onAction: handleAccountDisconnect,
         },
         connected: true,
       }
     : {
-        content: "No account connected",
+        content: 'No account connected',
         action: {
-          content: "Connect",
+          content: 'Connect',
           onAction: handleAccountConnect,
         },
         connected: false,

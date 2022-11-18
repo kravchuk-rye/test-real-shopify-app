@@ -1,15 +1,12 @@
-import { Shopify } from "@shopify/shopify-api";
+import { Shopify } from '@shopify/shopify-api';
 
 export const BillingInterval = {
-  OneTime: "ONE_TIME",
-  Every30Days: "EVERY_30_DAYS",
-  Annual: "ANNUAL",
+  OneTime: 'ONE_TIME',
+  Every30Days: 'EVERY_30_DAYS',
+  Annual: 'ANNUAL',
 };
 
-const RECURRING_INTERVALS = [
-  BillingInterval.Every30Days,
-  BillingInterval.Annual,
-];
+const RECURRING_INTERVALS = [BillingInterval.Every30Days, BillingInterval.Annual];
 
 let isProd;
 
@@ -23,7 +20,7 @@ let isProd;
 export default async function ensureBilling(
   session,
   { chargeName, amount, currencyCode, interval },
-  isProdOverride = process.env.NODE_ENV === "production"
+  isProdOverride = process.env.NODE_ENV === 'production'
 ) {
   if (!Object.values(BillingInterval).includes(interval)) {
     throw `Unrecognized billing interval '${interval}'`;
@@ -56,14 +53,11 @@ async function hasActivePayment(session, { chargeName, interval }) {
     const currentInstallations = await client.query({
       data: RECURRING_PURCHASES_QUERY,
     });
-    const subscriptions =
-      currentInstallations.body.data.currentAppInstallation.activeSubscriptions;
+    // @ts-expect-error wrong shopify typings
+    const subscriptions = currentInstallations.body.data.currentAppInstallation.activeSubscriptions;
 
     for (let i = 0, len = subscriptions.length; i < len; i++) {
-      if (
-        subscriptions[i].name === chargeName &&
-        (!isProd || !subscriptions[i].test)
-      ) {
+      if (subscriptions[i].name === chargeName && (!isProd || !subscriptions[i].test)) {
         return true;
       }
     }
@@ -77,16 +71,12 @@ async function hasActivePayment(session, { chargeName, interval }) {
           variables: { endCursor },
         },
       });
-      purchases =
-        currentInstallations.body.data.currentAppInstallation.oneTimePurchases;
+      // @ts-expect-error wrong shopify typings
+      purchases = currentInstallations.body.data.currentAppInstallation.oneTimePurchases;
 
       for (let i = 0, len = purchases.edges.length; i < len; i++) {
         const node = purchases.edges[i].node;
-        if (
-          node.name === chargeName &&
-          (!isProd || !node.test) &&
-          node.status === "ACTIVE"
-        ) {
+        if (node.name === chargeName && (!isProd || !node.test) && node.status === 'ACTIVE') {
           return true;
         }
       }
@@ -98,14 +88,11 @@ async function hasActivePayment(session, { chargeName, interval }) {
   return false;
 }
 
-async function requestPayment(
-  session,
-  { chargeName, amount, currencyCode, interval }
-) {
+async function requestPayment(session, { chargeName, amount, currencyCode, interval }) {
   const client = new Shopify.Clients.Graphql(session.shop, session.accessToken);
-  const returnUrl = `https://${Shopify.Context.HOST_NAME}?shop=${
-    session.shop
-  }&host=${Buffer.from(`${session.shop}/admin`).toString('base64')}`;
+  const returnUrl = `https://${Shopify.Context.HOST_NAME}?shop=${session.shop}&host=${Buffer.from(
+    `${session.shop}/admin`
+  ).toString('base64')}`;
 
   let data;
   if (isRecurring(interval)) {
@@ -126,10 +113,7 @@ async function requestPayment(
   }
 
   if (data.userErrors.length) {
-    throw new ShopifyBillingError(
-      "Error while billing the store",
-      data.userErrors
-    );
+    throw new ShopifyBillingError('Error while billing the store', data.userErrors);
   }
 
   return data.confirmationUrl;
@@ -162,20 +146,13 @@ async function requestRecurringPayment(
   });
 
   if (mutationResponse.body.errors && mutationResponse.body.errors.length) {
-    throw new ShopifyBillingError(
-      "Error while billing the store",
-      mutationResponse.body.errors
-    );
+    throw new ShopifyBillingError('Error while billing the store', mutationResponse.body.errors);
   }
 
   return mutationResponse;
 }
 
-async function requestSinglePayment(
-  client,
-  returnUrl,
-  { chargeName, amount, currencyCode }
-) {
+async function requestSinglePayment(client, returnUrl, { chargeName, amount, currencyCode }) {
   const mutationResponse = await client.query({
     data: {
       query: ONE_TIME_PURCHASE_MUTATION,
@@ -183,16 +160,13 @@ async function requestSinglePayment(
         name: chargeName,
         price: { amount, currencyCode },
         returnUrl,
-        test: process.env.NODE_ENV !== "production",
+        test: process.env.NODE_ENV !== 'production',
       },
     },
   });
 
   if (mutationResponse.body.errors && mutationResponse.body.errors.length) {
-    throw new ShopifyBillingError(
-      "Error while billing the store",
-      mutationResponse.body.errors
-    );
+    throw new ShopifyBillingError('Error while billing the store', mutationResponse.body.errors);
   }
 
   return mutationResponse;
@@ -203,7 +177,7 @@ function isRecurring(interval) {
 }
 
 export function ShopifyBillingError(message, errorData) {
-  this.name = "ShopifyBillingError";
+  this.name = 'ShopifyBillingError';
   this.stack = new Error().stack;
 
   this.message = message;
