@@ -1,14 +1,15 @@
-import { join } from 'path';
-import { readFileSync } from 'fs';
-import express from 'express';
+import { LATEST_API_VERSION, Shopify } from '@shopify/shopify-api';
 import cookieParser from 'cookie-parser';
-import { Shopify, LATEST_API_VERSION } from '@shopify/shopify-api';
+import express from 'express';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-import applyAuthMiddleware from './middleware/auth';
-import verifyRequest from './middleware/verify-request';
+import { AppInstallations } from './app_installations';
+import { getFirestoreSessionStorage } from './firestore/firestoreSessionStorage';
 import { setupGDPRWebHooks } from './gdpr';
 import redirectToAuth from './helpers/redirect-to-auth';
-import { AppInstallations } from './app_installations';
+import applyAuthMiddleware from './middleware/auth';
+import verifyRequest from './middleware/verify-request';
 
 const USE_ONLINE_TOKENS = false;
 
@@ -30,7 +31,7 @@ Shopify.Context.initialize({
   IS_EMBEDDED_APP: true,
   // This should be replaced with your preferred storage strategy
   // See note below regarding using CustomSessionStorage with this template.
-  SESSION_STORAGE: new Shopify.Session.SQLiteSessionStorage(DB_PATH),
+  SESSION_STORAGE: getFirestoreSessionStorage(),
   ...(process.env.SHOP_CUSTOM_DOMAIN && {
     CUSTOM_SHOP_DOMAINS: [process.env.SHOP_CUSTOM_DOMAIN],
   }),
