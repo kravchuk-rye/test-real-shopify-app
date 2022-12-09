@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  firestore:
+    image: google/cloud-sdk
+    ports:
+      - 8080:8080
+    command: gcloud beta emulators firestore start --project=demo-project-id --host-port=0.0.0.0:8080

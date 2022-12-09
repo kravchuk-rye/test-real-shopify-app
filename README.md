@@ -1,13 +1,20 @@
-# How to start
+# Development
 
-Start up checkout-core (for firestore, TODO - setup firestore locally in this repo)
+## Prepare for local development
 
 ```
-# install packages
 yarn
 
 yarn shopify ngrok auth {{YOUR_NGROK_TOKEN}}
 
+yarn deps:restart
+```
+
+The `yarn deps:restart` command starts a Firestore container and exposes it on port `8080`.
+
+## Start app locally
+
+```
 yarn dev
 
 ```
@@ -23,12 +30,12 @@ $ shopify app dev
 Looks like this is the first time you're running dev for this project.
 Configure your preferences by answering a few questions.
 
-
 Before you preview your work, it needs to be associated with an app.
 
 ✔ Create this project as a new app on Shopify? · No, connect it to an existing app
 ✔ Which existing app is this for? · rye-sales
 ✔ Using your default dev store (rye-dev-store) to preview your project.
+
 ```
 
 # Shopify App Template - Node

@@ -10,7 +10,10 @@
     "info": "shopify app info",
     "generate": "shopify app generate",
     "deploy": "shopify app deploy",
-    "format": "prettier --write web/**/*.{tsx,ts,js,jsx}"
+    "format": "prettier --write web/**/*.{tsx,ts,js,jsx}",
+    "deps:start": "docker compose up --build --detach",
+    "deps:stop": "docker compose down",
+    "deps:restart": "docker compose down && docker compose up --build --detach"
   },
   "dependencies": {
     "@shopify/app": "3.25.0",
