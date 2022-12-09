@@ -1,3 +1,36 @@
+# How to start
+
+Start up checkout-core (for firestore, TODO - setup firestore locally in this repo)
+
+```
+# install packages
+yarn
+
+yarn shopify ngrok auth {{YOUR_NGROK_TOKEN}}
+
+yarn dev
+
+```
+
+answer questions
+
+```
+yarn dev
+yarn run v1.22.19
+$ shopify app dev
+✔ Dependencies installed
+
+Looks like this is the first time you're running dev for this project.
+Configure your preferences by answering a few questions.
+
+
+Before you preview your work, it needs to be associated with an app.
+
+✔ Create this project as a new app on Shopify? · No, connect it to an existing app
+✔ Which existing app is this for? · rye-sales
+✔ Using your default dev store (rye-dev-store) to preview your project.
+```
+
 # Shopify App Template - Node
 
 This is a template for building a [Shopify app](https://shopify.dev/apps/getting-started) using Node and React. It contains the basics for building a Shopify app.
@@ -158,21 +191,19 @@ We fixed this issue with v3.4.0 of the CLI, so after updating it, you can make t
 1. Change the definition `hmrConfig` object to be:
 
    ```js
-   const host = process.env.HOST
-     ? process.env.HOST.replace(/https?:\/\//, "")
-     : "localhost";
+   const host = process.env.HOST ? process.env.HOST.replace(/https?:\/\//, '') : 'localhost';
 
    let hmrConfig;
-   if (host === "localhost") {
+   if (host === 'localhost') {
      hmrConfig = {
-       protocol: "ws",
-       host: "localhost",
+       protocol: 'ws',
+       host: 'localhost',
        port: 64999,
        clientPort: 64999,
      };
    } else {
      hmrConfig = {
-       protocol: "wss",
+       protocol: 'wss',
        host: host,
        port: process.env.FRONTEND_PORT,
        clientPort: 443,
