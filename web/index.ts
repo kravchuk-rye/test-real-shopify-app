@@ -1,15 +1,17 @@
-import { LATEST_API_VERSION, Shopify } from '@shopify/shopify-api';
+import applyAuthMiddleware from './middleware/auth';
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-
-import { AppInstallations } from './app_installations';
-import { getFirestoreSessionStorage } from './firestore/firestoreSessionStorage';
-import { setupGDPRWebHooks } from './gdpr';
 import redirectToAuth from './helpers/redirect-to-auth';
-import applyAuthMiddleware from './middleware/auth';
 import verifyRequest from './middleware/verify-request';
+import { AppInstallations } from './app_installations';
+import { initializeApp } from 'firebase-admin/app';
+import { createSimpleLogger } from 'simple-node-logger';
+import { Firestore } from 'firebase-admin/firestore';
+import { getFirestoreSessionStorage } from './firestore/firestoreSessionStorage';
+import { join } from 'path';
+import { LATEST_API_VERSION, Shopify } from '@shopify/shopify-api';
+import { readFileSync } from 'fs';
+import { setupGDPRWebHooks } from './gdpr';
 
 const USE_ONLINE_TOKENS = false;
 
@@ -19,7 +21,15 @@ const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT || '3000', 10
 const DEV_INDEX_PATH = `${process.cwd()}/frontend/`;
 const PROD_INDEX_PATH = `${process.cwd()}/frontend/dist/`;
 
-const DB_PATH = `${process.cwd()}/database.sqlite`;
+initializeApp();
+const firestoreClient = new Firestore({
+  projectId: process.env.GCP_PROJECT_ID,
+  ignoreUndefinedProperties: true,
+});
+
+const logger = createSimpleLogger({
+  level: process.env.NODE_ENV === 'test' ? 'fatal' : (process.env.LOG_LEVEL as 'all') ?? 'all',
+});
 
 Shopify.Context.initialize({
   API_KEY: process.env.SHOPIFY_API_KEY!,
@@ -31,7 +41,7 @@ Shopify.Context.initialize({
   IS_EMBEDDED_APP: true,
   // This should be replaced with your preferred storage strategy
   // See note below regarding using CustomSessionStorage with this template.
-  SESSION_STORAGE: getFirestoreSessionStorage(),
+  SESSION_STORAGE: getFirestoreSessionStorage(firestoreClient, logger),
   ...(process.env.SHOP_CUSTOM_DOMAIN && {
     CUSTOM_SHOP_DOMAINS: [process.env.SHOP_CUSTOM_DOMAIN],
   }),
