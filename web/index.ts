@@ -4,13 +4,14 @@ import express from 'express';
 import redirectToAuth from './helpers/redirect-to-auth';
 import verifyRequest from './middleware/verify-request';
 import { AppInstallations } from './app_installations';
-import { initializeApp } from 'firebase-admin/app';
 import { createSimpleLogger } from 'simple-node-logger';
 import { Firestore } from 'firebase-admin/firestore';
 import { getFirestoreSessionStorage } from './firestore/firestoreSessionStorage';
+import { initializeApp } from 'firebase-admin/app';
 import { join } from 'path';
 import { LATEST_API_VERSION, Shopify } from '@shopify/shopify-api';
 import { readFileSync } from 'fs';
+import { sentryInit } from './utils/sentry';
 import { setupGDPRWebHooks } from './gdpr';
 
 const USE_ONLINE_TOKENS = false;
@@ -21,14 +22,16 @@ const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT || '3000', 10
 const DEV_INDEX_PATH = `${process.cwd()}/frontend/`;
 const PROD_INDEX_PATH = `${process.cwd()}/frontend/dist/`;
 
+const logger = createSimpleLogger({
+  level: process.env.NODE_ENV === 'test' ? 'fatal' : (process.env.LOG_LEVEL as 'all') ?? 'all',
+});
+
+sentryInit(process.env.SENTRY_DSN!, process.env.SENTRY_ENVIRONMENT!, logger);
+
 initializeApp();
 const firestoreClient = new Firestore({
   projectId: process.env.GCP_PROJECT_ID,
   ignoreUndefinedProperties: true,
-});
-
-const logger = createSimpleLogger({
-  level: process.env.NODE_ENV === 'test' ? 'fatal' : (process.env.LOG_LEVEL as 'all') ?? 'all',
 });
 
 Shopify.Context.initialize({

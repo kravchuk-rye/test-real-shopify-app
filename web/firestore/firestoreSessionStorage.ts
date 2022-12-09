@@ -1,7 +1,8 @@
-import { SessionInterface } from '@shopify/shopify-api';
+import * as Sentry from '@sentry/node';
 import { CustomSessionStorage } from '@shopify/shopify-api/dist/auth/session/storage/custom';
 import { FieldPath, FieldValue, Firestore } from 'firebase-admin/firestore';
 import { Logger } from 'simple-node-logger';
+import { SessionInterface } from '@shopify/shopify-api';
 
 const shopifyStoresCollectionName = 'shopifyStores';
 
@@ -33,7 +34,7 @@ export function getFirestoreSessionStorage(
           { merge: true }
         );
     } catch (err) {
-      // TODO: Integrate Sentry
+      Sentry.captureException(err, { extra: { session } });
       throw err;
     }
 
@@ -50,7 +51,7 @@ export function getFirestoreSessionStorage(
         .where(getSessionPath(id), '!=', null)
         .get();
     } catch (err) {
-      // TODO: Integrate Sentry
+      Sentry.captureException(err, { extra: { sessionId: id } });
       throw err;
     }
 
@@ -78,7 +79,7 @@ export function getFirestoreSessionStorage(
         .where(getSessionPath(id), '!=', null)
         .get();
     } catch (err) {
-      // TODO: Integrate Sentry
+      Sentry.captureException(err, { extra: { sessionId: id } });
       throw err;
     }
 
@@ -97,7 +98,7 @@ export function getFirestoreSessionStorage(
         })
       );
     } catch (err) {
-      // TODO: Integrate Sentry
+      Sentry.captureException(err);
       throw err;
     }
 
@@ -121,7 +122,7 @@ export function getFirestoreSessionStorage(
         sessions = Object.values(docSessions);
       }
     } catch (err) {
-      // TODO: Integrate Sentry
+      Sentry.captureException(err, { extra: { shop } });
       throw err;
     }
 
