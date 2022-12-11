@@ -3,9 +3,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "compile": "tsc",
     "debug": "ts-node --inspect index.ts",
     "dev": "cross-env GCP_PROJECT_ID=demo-project-id NODE_ENV=development FIRESTORE_EMULATOR_HOST=0.0.0.0:8080 node-dev index.ts --ignore ./frontend",
-    "serve": "cross-env NODE_ENV=production node index.ts",
+    "serve": "cross-env NODE_ENV=production node ./dist/index.js",
     "test": "cross-env GCP_PROJECT_ID=demo-project-id NODE_ENV=development FIRESTORE_EMULATOR_HOST=0.0.0.0:8080 jest"
   },
   "engines": {

@@ -1,0 +1,19 @@
+name: Staging
+
+on:
+  push:
+    branches: ['main']
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  main:
+    uses: ./.github/workflows/main.yml
+    with:
+      # TODO Replace with STAGING project
+      project_id: gleaming-terra-371204
+    secrets:
+      SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_STAGING_GITHUB_ACTIONS_SA_KEY }}
+      SHOPIFY_API_KEY: ${{ secrets.GCP_GITHUB_ACTIONS_SHOPIFY_API_KEY }}
+      SHOPIFY_API_SECRET: ${{ secrets.GCP_GITHUB_ACTIONS_SHOPIFY_API_SECRET }}

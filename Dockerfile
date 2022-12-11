@@ -2,9 +2,19 @@ FROM node:18-alpine
 
 ARG SHOPIFY_API_KEY
 ENV SHOPIFY_API_KEY=$SHOPIFY_API_KEY
-EXPOSE 8081
+
+ARG SHOPIFY_API_SECRET
+ENV SHOPIFY_API_SECRET=$SHOPIFY_API_SECRET
+
+ARG SCOPES
+ENV SCOPES=$SCOPES
+
+ARG PORT
+EXPOSE ${PORT}
+
 WORKDIR /app
 COPY web .
 RUN npm install
-RUN cd frontend && npm install && npm run build
-CMD ["npm", "run", "serve"]
+RUN cd frontend && yarn install && yarn build
+RUN yarn compile
+CMD ["yarn", "serve"]
